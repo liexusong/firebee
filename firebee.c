@@ -152,7 +152,7 @@ static short redis_port = 6379;
 int parse_redis(char *host)
 {
     struct hostent *he;
-    struct in_addr **addr_list;
+    struct in_addr **addrs;
     char *port;
     int i;
 
@@ -165,10 +165,10 @@ int parse_redis(char *host)
         return -1;
     }
 
-    addr_list = (struct in_addr **)he->h_addr_list;
+    addrs = (struct in_addr **)he->h_addr_list;
 
-    for(i = 0; addr_list[i] != NULL; i++) {
-        redis_addr = inet_ntoa(*addr_list[i]);
+    for(i = 0; addrs[i] != NULL; i++) {
+        redis_addr = inet_ntoa(*addrs[i]);
         break;
     }
 
@@ -186,12 +186,12 @@ void set_instance_id()
     int retval = -1;
 
     if (!redis_addr) {
-        fatal("Fatal: Redis host have not set, using `-r' option to set\n");
+        fatal("ERROR: redis host have not set, using `-r' option\n");
     }
 
     redis = redisConnect(redis_addr, redis_port);
     if (redis == NULL || redis->err) {
-        fatal("Fatal: Can not connect to Redis server\n");
+        fatal("ERROR: can not connect to redis server\n");
     }
 
     reply = redisCommand(redis, "INCR *firebee_instance_id*");
@@ -203,7 +203,7 @@ void set_instance_id()
         g_ctx.instance_id = (int)reply->integer;
 
     } else {
-    	fatal("Fatal: Can not get instance ID from Redis server\n");
+    	fatal("ERROR: can not get instance ID\n");
     }
 
     freeReplyObject(reply);
@@ -219,9 +219,7 @@ void parse_options(int argc, char **argv)
     {
         switch (opt) {
         case 'r':
-            if (parse_redis(optarg)) {
-                fatal("Fatal: Can not get the Redis IP address\n");
-            }
+            parse_redis(optarg);
             break;
         case 'l':
             l_host = strdup(optarg);
