@@ -183,31 +183,36 @@ void set_instance_id()
 {
     static redisContext *redis;
     redisReply *reply = NULL;
-    int retval = -1;
+    char *errmsg;
 
     if (!redis_addr) {
-        fatal("ERROR: redis host have not set, using `-r' option\n");
+        errmsg = "redis host have not set, using `-r' option";
+        goto error;
     }
 
     redis = redisConnect(redis_addr, redis_port);
     if (redis == NULL || redis->err) {
-        fatal("ERROR: can not connect to redis server\n");
+        errmsg = "can not connect to redis server";
+        goto error;
     }
 
     reply = redisCommand(redis, "INCR *firebee_instance_id*");
 
-    if (redis->err == 0
-        && reply != NULL
-        && reply->type == REDIS_REPLY_INTEGER)
+    if (redis->err != 0
+        || reply == NULL
+        || reply->type != REDIS_REPLY_INTEGER)
     {
-        g_ctx.instance_id = (int)reply->integer;
-
-    } else {
-    	fatal("ERROR: can not get instance ID\n");
+        errmsg = "can not get instance ID from redis";
+        goto error;
     }
+
+    g_ctx.instance_id = (int)reply->integer;
 
     freeReplyObject(reply);
     redisFree(redis);
+
+error:
+    fatal("ERROR: %s\n", errmsg);
 }
 
 void parse_options(int argc, char **argv)
