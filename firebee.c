@@ -211,8 +211,11 @@ void set_instance_id()
     freeReplyObject(reply);
     redisFree(redis);
 
+    return;
+
 error:
-    fatal("Exit: %s\n", msg);
+    fatal("Exit(1): %s\n", msg);
+    return;
 }
 
 void parse_options(int argc, char **argv)
