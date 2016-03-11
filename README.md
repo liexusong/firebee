@@ -10,3 +10,17 @@ Starup options:
 -p port       # listen port
 -d            # run as daemonize mode
 </pre>
+
+Example:
+--------
+http://your-host/gen
+
+Distributed architecture
+------------------------
+<pre>
+                  [Client]
+                 /        \
+        [Haproxy]        [Haproxy]
+        /     \           /      \
+[Firebee]  [Firebee]  [Firebee]  [Firebee]  ------> [Redis]
+</pre>
