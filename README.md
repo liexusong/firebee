@@ -1,4 +1,4 @@
-# firebee
+# Firebee
 Very simple unique ID generator, using HTTP protocol!
 
 <b>Rely on libraries: `Libevent` and `Hiredis`</b>
