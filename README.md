@@ -22,5 +22,5 @@ Distributed architecture
                  /        \
         [Haproxy]        [Haproxy]
         /     \           /      \
-[Firebee]  [Firebee]  [Firebee]  [Firebee]  ------> [Redis]
+[Firebee]  [Firebee]  [Firebee]  [Firebee]  <------ [Redis]
 </pre>

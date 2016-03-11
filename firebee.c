@@ -183,16 +183,16 @@ void set_instance_id()
 {
     static redisContext *redis;
     redisReply *reply = NULL;
-    char *errmsg;
+    char *msg;
 
     if (!redis_addr) {
-        errmsg = "redis host have not set, using `-r' option";
+        msg = "redis host have not set, using `-r' option";
         goto error;
     }
 
     redis = redisConnect(redis_addr, redis_port);
     if (redis == NULL || redis->err) {
-        errmsg = "can not connect to redis server";
+        msg = "can not connect to redis server";
         goto error;
     }
 
@@ -202,7 +202,7 @@ void set_instance_id()
         || reply == NULL
         || reply->type != REDIS_REPLY_INTEGER)
     {
-        errmsg = "can not get instance ID from redis";
+        msg = "can not get instance ID from redis";
         goto error;
     }
 
@@ -212,7 +212,7 @@ void set_instance_id()
     redisFree(redis);
 
 error:
-    fatal("ERROR: %s\n", errmsg);
+    fatal("Exit: %s\n", msg);
 }
 
 void parse_options(int argc, char **argv)
